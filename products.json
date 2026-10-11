@@ -1,6 +1,7 @@
 {
   "demo": false,
-  "note": "Productos y precios tomados de las publicaciones de Instagram (@mundoonlinecostarica). Confirmar los marcados con \"confirm\": true. Precios en colones (CRC); el servidor los valida al cobrar. Las líneas Tecnología, Hogar, Electrodomésticos y Colchones se muestran como 'en preparación' hasta que se agreguen productos.",
+  "note": "Productos y precios tomados de las publicaciones de Instagram (@mundoonlinecostarica). Confirmar con el cliente los marcados \"confirm\": true. Precios en colones (CRC). Las líneas Tecnología, Hogar, Electrodomésticos y Colchones aparecen como 'en preparación' hasta que se agreguen productos.",
+  "skuScheme": "SKU tentativos: MO-<LÍNEA>-<NNN>. REL = Relojes · TEC = Tecnología · HOG = Hogar · ELE = Electrodomésticos · COL = Colchones. Se ajustarán con el cliente.",
   "shipping": 0,
   "categories": [
     { "id": "relojes", "name": "Relojes" },
@@ -10,10 +11,54 @@
     { "id": "colchones", "name": "Colchones" }
   ],
   "items": [
-    { "id": "rel-001", "cat": "relojes", "name": "Reloj clásico de lujo", "desc": "Cuadrante azul degradado, acabados de lujo. Entrega incluida en el área metropolitana.", "price": 24900, "image": "assets/gallery/reloj-azul-clasico.jpg", "badge": "Clásico" },
-    { "id": "rel-002", "cat": "relojes", "name": "Reloj diseño cristal esmeralda", "desc": "Un diseño diferente que roba miradas. Incluye caja premium.", "price": 25000, "image": "assets/gallery/reloj-cristal-esmeralda.jpg", "badge": "Caja premium" },
-    { "id": "rel-003", "cat": "relojes", "name": "Cronógrafo celeste menta · azul oscuro · azul metálico", "desc": "Cronógrafos funcionales, material premium, ideal para regalo y resistente al agua.", "price": 25000, "image": "assets/gallery/reloj-cronografo-colores.jpg", "badge": "Más vendido", "confirm": true },
-    { "id": "rel-004", "cat": "relojes", "name": "Cronógrafo cuadrante azul · Nueva colección", "desc": "Caja de lujo y dispositivo para ajustar eslabones, de cortesía.", "price": 25000, "image": "assets/gallery/reloj-cuadrante-azul.jpg", "badge": "Nuevo", "confirm": true },
-    { "id": "rel-005", "cat": "relojes", "name": "Promo 20+5 · Curren 8451 + 8410", "desc": "Llévate un modelo Curren 8451 y un 8410 por un precio de locura. Se agotan rápido.", "price": 25000, "image": "assets/gallery/promo-curren.jpg", "badge": "Promo" }
+    {
+      "id": "rel-001", "sku": "MO-REL-001", "cat": "relojes", "badge": "Clásico", "price": 24900,
+      "name": "Reloj clásico de lujo",
+      "desc": "Un modelo clásico que siempre roba miradas, con cuadrante azul degradado.",
+      "features": ["Acabados de lujo", "Entrega incluida en el área metropolitana", "Aceptamos tarjeta, SINPE o efectivo"],
+      "images": ["reloj-azul-clasico", "clasico-esfera"]
+    },
+    {
+      "id": "rel-002", "sku": "MO-REL-002", "cat": "relojes", "badge": "Caja premium", "price": 25000,
+      "name": "Reloj diseño cristal esmeralda",
+      "desc": "Un diseño diferente que roba miradas: elegancia y estilo en un solo accesorio.",
+      "features": ["Incluye caja premium", "Cristal facetado esmeralda y brazalete dorado", "Entrega en GAM"],
+      "images": ["reloj-cristal-esmeralda", "esmeralda-esfera", "esmeralda-brazalete"]
+    },
+    {
+      "id": "rel-003", "sku": "MO-REL-003", "cat": "relojes", "badge": "Cronógrafo", "price": 25000, "confirm": true,
+      "name": "Cronógrafo celeste menta",
+      "desc": "Fresco, moderno y diferente. Cronógrafo funcional con brazalete de acero.",
+      "features": ["Material premium", "Cronógrafos funcionales", "Ideal para regalo", "Resistente al agua"],
+      "images": ["cronografo-celeste-menta", "reloj-cronografo-colores"]
+    },
+    {
+      "id": "rel-004", "sku": "MO-REL-004", "cat": "relojes", "badge": "Cronógrafo", "price": 25000, "confirm": true,
+      "name": "Cronógrafo azul oscuro",
+      "desc": "Elegante, sofisticado y masculino. Brazalete azul a juego.",
+      "features": ["Material premium", "Cronógrafos funcionales", "Ideal para regalo", "Resistente al agua"],
+      "images": ["cronografo-azul-oscuro", "reloj-cronografo-colores"]
+    },
+    {
+      "id": "rel-005", "sku": "MO-REL-005", "cat": "relojes", "badge": "Cronógrafo", "price": 25000, "confirm": true,
+      "name": "Cronógrafo azul metálico",
+      "desc": "Clásico, versátil y con estilo. Brazalete de acero.",
+      "features": ["Material premium", "Cronógrafos funcionales", "Ideal para regalo", "Resistente al agua"],
+      "images": ["cronografo-azul-metalico", "reloj-cronografo-colores"]
+    },
+    {
+      "id": "rel-006", "sku": "MO-REL-006", "cat": "relojes", "badge": "Nueva colección", "price": 25000, "confirm": true,
+      "name": "Cronógrafo cuadrante azul",
+      "desc": "Estilo que distingue: caja octogonal, subesferas y brazalete de acero.",
+      "features": ["Caja de lujo incluida", "Dispositivo para ajustar eslabones, de cortesía", "Entrega incluida en el área metropolitana"],
+      "images": ["reloj-cuadrante-azul", "cuadrante-azul-esfera", "cuadrante-azul-eslabones"]
+    },
+    {
+      "id": "rel-007", "sku": "MO-REL-007", "cat": "relojes", "badge": "Promo 20+5", "price": 25000,
+      "name": "Promo 20+5 · Curren 8451 + 8410",
+      "desc": "Llévate un modelo Curren 8451 y un 8410 por un precio de locura. Se agotan rápido.",
+      "features": ["Dos modelos Curren cronógrafo", "Entrega incluida en el área metropolitana", "Por correos y encomienda a todo el país"],
+      "images": ["promo-curren", "curren-azul", "curren-verde", "curren-acero", "curren-colores"]
+    }
   ]
 }

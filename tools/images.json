@@ -1,0 +1,34 @@
+{
+  "widths": [240, 480, 800, 1200, 1600],
+  "quality": 78,
+  "images": [
+    { "name": "reloj-cronografo-colores", "src": "ig-cronografos.jpg", "alt": "Tres relojes cronógrafo en celeste menta, azul oscuro y azul metálico sobre almohadillas", "credit": "Instagram @mundoonlinecostarica" },
+    { "name": "cronografo-celeste-menta", "src": "ig-cronografos.jpg", "ref": 1000, "crop": [0, 190, 400, 640], "alt": "Reloj cronógrafo celeste menta con brazalete de acero", "credit": "Instagram @mundoonlinecostarica" },
+    { "name": "cronografo-azul-oscuro", "src": "ig-cronografos.jpg", "ref": 1000, "crop": [340, 250, 700, 650], "alt": "Reloj cronógrafo azul oscuro con brazalete azul", "credit": "Instagram @mundoonlinecostarica" },
+    { "name": "cronografo-azul-metalico", "src": "ig-cronografos.jpg", "ref": 1000, "crop": [640, 230, 1000, 670], "alt": "Reloj cronógrafo azul metálico con brazalete de acero", "credit": "Instagram @mundoonlinecostarica" },
+    { "name": "reloj-cristal-esmeralda", "src": "ig-esmeralda.jpg", "alt": "Reloj de diseño con cristal facetado esmeralda y brazalete dorado", "credit": "Instagram @mundoonlinecostarica" },
+    { "name": "esmeralda-esfera", "src": "ig-esmeralda.jpg", "ref": 1000, "crop": [300, 440, 860, 1000], "alt": "Detalle de la esfera esmeralda y el cristal facetado", "credit": "Instagram @mundoonlinecostarica" },
+    { "name": "esmeralda-brazalete", "src": "ig-esmeralda.jpg", "ref": 1000, "crop": [540, 0, 940, 480], "alt": "Detalle del brazalete dorado del reloj esmeralda", "credit": "Instagram @mundoonlinecostarica" },
+    { "name": "reloj-azul-clasico", "src": "ig-clasico.jpg", "alt": "Reloj clásico de esfera azul en la muñeca", "credit": "Instagram @mundoonlinecostarica" },
+    { "name": "clasico-esfera", "src": "ig-clasico.jpg", "crop": [150, 150, 490, 490], "alt": "Detalle de la esfera azul degradada del reloj clásico", "credit": "Instagram @mundoonlinecostarica" },
+    { "name": "reloj-cuadrante-azul", "src": "ig-cuadrante-azul.jpg", "alt": "Reloj cronógrafo de cuadrante azul apoyado sobre tierra", "credit": "Instagram @mundoonlinecostarica" },
+    { "name": "cuadrante-azul-esfera", "src": "ig-cuadrante-azul.jpg", "ref": 1000, "crop": [200, 300, 760, 860], "alt": "Detalle del cuadrante azul con subesferas", "credit": "Instagram @mundoonlinecostarica" },
+    { "name": "cuadrante-azul-eslabones", "src": "ig-cuadrante-azul.jpg", "ref": 1000, "crop": [640, 400, 1000, 860], "alt": "Detalle de los eslabones de acero del reloj", "credit": "Instagram @mundoonlinecostarica" },
+    { "name": "promo-curren", "src": "ig-promo-curren.jpg", "alt": "Promo 20+5: relojes cronógrafo Curren en varios colores", "credit": "Instagram @mundoonlinecostarica" },
+    { "name": "curren-azul", "src": "ig-promo-curren.jpg", "ref": 1000, "crop": [20, 0, 410, 350], "alt": "Reloj Curren cronógrafo azul con detalles en rosa dorado", "credit": "Instagram @mundoonlinecostarica" },
+    { "name": "curren-verde", "src": "ig-promo-curren.jpg", "ref": 1000, "crop": [520, 0, 1000, 472], "alt": "Reloj Curren cronógrafo de esfera verde y brazalete negro", "credit": "Instagram @mundoonlinecostarica" },
+    { "name": "curren-acero", "src": "ig-promo-curren.jpg", "ref": 1000, "crop": [100, 580, 440, 1000], "alt": "Reloj Curren cronógrafo de acero con esfera negra y blanca", "credit": "Instagram @mundoonlinecostarica" },
+    { "name": "curren-colores", "src": "ig-promo-curren.jpg", "ref": 1000, "crop": [520, 520, 1000, 1000], "alt": "Relojes Curren de acero en seis colores de esfera", "credit": "Instagram @mundoonlinecostarica" },
+
+    { "name": "stock-tecnologia", "src": "stock-tecnologia.jpg", "alt": "Audífonos, laptop, celular y café sobre un escritorio blanco", "credit": "Pexels #8251149 · https://www.pexels.com/photo/8251149/" },
+    { "name": "stock-tecnologia-2", "src": "stock-tecnologia-2.jpg", "alt": "Laptop y celular sobre un escritorio de madera con luz natural", "credit": "Pexels #34170828 · https://www.pexels.com/photo/34170828/" },
+    { "name": "stock-hogar", "src": "stock-hogar.jpg", "crop": [0, 600, 1600, 1800], "alt": "Sala luminosa con sofá gris, cuadro y alfombra", "credit": "Pexels #4846106 · https://www.pexels.com/photo/4846106/" },
+    { "name": "stock-hogar-2", "src": "stock-hogar-2.jpg", "alt": "Sala moderna con sofá azul, cuadros y ventanal", "credit": "Pexels #4857768 · https://www.pexels.com/photo/4857768/" },
+    { "name": "stock-electro", "src": "stock-electro.jpg", "alt": "Cuarto de lavandería con lavadora y secadora", "credit": "Pexels #17158638 · https://www.pexels.com/photo/17158638/" },
+    { "name": "stock-electro-2", "src": "stock-electro-2.jpg", "alt": "Cocina moderna con cocina de inducción en isla", "credit": "Pexels #7147298 · https://www.pexels.com/photo/7147298/" },
+    { "name": "stock-colchones", "src": "stock-colchones.jpg", "crop": [0, 700, 1600, 1900], "alt": "Dormitorio luminoso con cama, almohadas y plantas", "credit": "Pexels #5858236 · https://www.pexels.com/photo/5858236/" },
+    { "name": "stock-colchones-2", "src": "stock-colchones-2.jpg", "crop": [0, 400, 1600, 1600], "alt": "Cama con sábanas y almohadas blancas", "credit": "Pexels #3030684 · https://www.pexels.com/photo/3030684/" },
+    { "name": "stock-regalo", "src": "stock-regalo.jpg", "crop": [0, 40, 1600, 740], "alt": "Manos abriendo un paquete con luz cálida", "credit": "Pexels #35765435 · https://www.pexels.com/photo/35765435/" },
+    { "name": "stock-cr-arenal", "src": "stock-cr-arenal.jpg", "alt": "Volcán Arenal y nubes sobre el lago, Costa Rica", "credit": "Pexels #13068955 · https://www.pexels.com/photo/13068955/" }
+  ]
+}

@@ -22,7 +22,7 @@ function buildOrder(payload) {
     const qty = Math.min(Math.max(parseInt(it.qty, 10) || 0, 0), 20);
     if (!p || !qty) continue;
     total += p.price * qty;
-    lines.push(`${qty}x ${p.name}`);
+    lines.push(`${qty}x ${p.name} (${p.sku})`);
   }
   if (!lines.length || total <= 0) throw new HttpError(400, 'El carrito está vacío.');
   const c = payload.customer || {};
