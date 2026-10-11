@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /netlify/
+Disallow: /gracias.html
+Sitemap: __SITE_URL__/sitemap.xml

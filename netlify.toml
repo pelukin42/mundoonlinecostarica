@@ -1,0 +1,25 @@
+[build]
+  publish = "."
+  functions = "netlify/functions"
+  # Escribe el dominio real (o la URL de Netlify) en OG, canonical, sitemap y robots.
+  command = "sed -i \"s|__SITE_URL__|${URL%/}|g\" index.html sitemap.xml robots.txt"
+
+[functions]
+  node_bundler = "esbuild"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/assets/gallery/gallery.json"
+  [headers.values]
+    Cache-Control = "no-cache"
