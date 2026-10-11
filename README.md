@@ -23,10 +23,17 @@ netlify/functions/                (fase 2, opcional) pagos con tarjeta ONVO Pay 
 python3 -m http.server 8000      # abre http://localhost:8000
 ```
 
-## Cómo funciona el pedido (hoy)
-El cliente agrega productos y toca **«Pedir por WhatsApp»**: se abre el chat de **8997‑7020** con la lista, los **códigos
-SKU** y el total. Ahí se coordina el pago (tarjeta, SINPE Móvil o efectivo) y la entrega, como ya hace el negocio.
-No hay cobro con tarjeta en la web porque el cliente no lo pidió; queda preparado como **fase 2** (ver abajo).
+## Botones de WhatsApp y pedido
+Todos los botones de mensaje usan el logo real de WhatsApp, abren el chat de **8997‑7020** con un texto ya escrito y llevan la
+firma «Enviado desde mundoonlinecr.com» (así el negocio sabe qué mensajes vienen del sitio):
+* **Inicio:** botón verde «Pedir por WhatsApp» con el número, y el mismo botón en el encabezado y en el menú móvil.
+* **Burbuja flotante** con menú rápido: pedido, disponibilidad y precios, envío a mi zona, hablar con un asesor, llamar e Instagram.
+* **Cada producto:** botón «Pedir» (producto, SKU y precio) además de «Agregar»; la vista rápida lo repite en grande.
+* **Barra de pedido** que aparece al agregar productos (cantidad, total y «Pedir por WhatsApp»); el cajón del pedido suma
+  «Copiar mi pedido». El mensaje lista cada producto con su SKU y el total.
+* **Galería:** «Preguntar por este reloj» en cada foto ampliada; los banners, la sección de contacto y «línea en preparación»
+  también tienen su botón con mensaje propio.
+Si `whatsapp` queda vacío en `config.js`, todos los botones se convierten en mensaje directo de Instagram.
 
 ## Datos del negocio (`assets/js/config.js`)
 WhatsApp y llamadas, redes, cobertura y mapa ya están cargados con lo publicado en Instagram. Correo, dirección y
@@ -59,14 +66,18 @@ instrucciones de DNS. Es la única opción que ejecuta las funciones de la fase 
 **Opción C · hosting tradicional (cPanel/FTP).** Subir el contenido de esta carpeta a `public_html`.
 Las URLs de canonical/OG/sitemap ya apuntan a `https://mundoonlinecr.com`.
 
-## Fase 2 (opcional): cobrar con tarjeta
-Ya están implementadas y probadas con respuestas simuladas, pero **desactivadas** (`payments` en `config.js`).
-Para activarlas: publicar en Netlify, poner `true` en **una** pasarela, cargar las llaves de `.env.example` en
-*Environment variables* y probar en modo pruebas.
-* **ONVO Pay** (`onvo-intent.js`): `ONVO_SECRET_KEY`, `ONVO_PUBLIC_KEY` (llaves `onvo_test_…` y luego `onvo_live_…`).
-* **Tilopay** (`tilopay-checkout.js`): `TILOPAY_API_KEY`, `TILOPAY_API_USER`, `TILOPAY_API_PASSWORD`.
-Los precios siempre se recalculan en el servidor desde `products.json`; el SKU viaja en el detalle de cada pago.
-Falta una prueba real con llaves de pruebas y validar el retorno/webhook de la pasarela elegida antes de despachar.
+## Pago con tarjeta (Tilopay)
+Aparece como **«Pagar con tarjeta · Tilopay»** en el cajón del pedido y en la vista rápida, junto a WhatsApp. Tiene tres modos
+(`cardMode` en `assets/js/config.js`):
+* `'soon'` (actual): se muestra como «Próximamente» porque aún no hay credenciales.
+* `'demo'`: simula el flujo completo (checkout → pago aprobado) sin pedir tarjeta ni cobrar; sirve para revisarlo con el cliente.
+* `'live'`: cobra de verdad. Requiere publicar en **Netlify** (las funciones no corren en GitHub Pages) y cargar en
+  *Environment variables*: `TILOPAY_API_KEY`, `TILOPAY_API_USER`, `TILOPAY_API_PASSWORD` (ver `.env.example`; las credenciales
+  salen de admin.tilopay.com → *Tilopay Checkout*, con modo de pruebas). El servidor hace `login` → `processPayment`, redirige
+  al checkout de Tilopay y vuelve a `/gracias.html` (`code=1` = aprobado).
+Los precios siempre se recalculan en el servidor desde `products.json` y el SKU viaja en el detalle del pago. ONVO Pay también
+está implementado (`payments.onvo: true`, llaves `ONVO_SECRET_KEY` y `ONVO_PUBLIC_KEY`). Falta una prueba real con
+credenciales de pruebas y validar el retorno/webhook de la pasarela antes de despachar.
 
 ## Marca
 Logo vectorial con texto a trazos (`assets/logo/*.svg`), favicon, `og-image.jpg` e íconos PWA. El coral lleva texto azul

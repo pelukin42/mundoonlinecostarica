@@ -1,4 +1,4 @@
-/* Mundo Online Costa Rica · imágenes, catálogo y pedido por WhatsApp (pago con tarjeta opcional, fase 2) */
+/* Mundo Online Costa Rica · imágenes, catálogo, pedido por WhatsApp y pago con tarjeta (Tilopay / ONVO) */
 (() => {
 'use strict';
 const C = window.MO_CONFIG || {};
@@ -13,18 +13,27 @@ const store = {
   get(k, d) { try { return JSON.parse(localStorage.getItem(k)) ?? d; } catch { return d; } },
   set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch { /* sin almacenamiento */ } }
 };
-const waNumber = (C.whatsapp || '').replace(/\D/g, '');
-const waHref = (msg = '') => waNumber
-  ? `https://wa.me/${waNumber}?text=${encodeURIComponent(msg)}`
-  : `https://ig.me/m/${C.instagram || 'mundoonlinecostarica'}`; // respaldo mientras no haya número
 const ICON = { relojes: 'watch', tecnologia: 'laptop', hogar: 'home', electro: 'washer', colchones: 'bed' };
 const GRAD = {
   relojes: 'linear-gradient(150deg,#0d2b45,#14b8a6)', tecnologia: 'linear-gradient(150deg,#0d2b45,#14b8a6)',
   hogar: 'linear-gradient(150deg,#14385a,#ff6b4a)', electro: 'linear-gradient(150deg,#0b7a6e,#0d2b45)', colchones: 'linear-gradient(150deg,#ff6b4a,#0d2b45)'
 };
 const SOON_IMG = { tecnologia: 'stock-tecnologia-2', hogar: 'stock-hogar-2', electro: 'stock-electro-2', colchones: 'stock-colchones-2' };
-const svg = n => `<svg class="ic"><use href="#i-${n}"/></svg>`;
-const cardOn = !!(C.payments && (C.payments.onvo || C.payments.tilopay)); // fase 2: cobro con tarjeta
+const svg = n => n === 'wa' ? '<svg class="ic fill"><use href="#i-whatsapp"/></svg>' : `<svg class="ic"><use href="#i-${n}"/></svg>`;
+
+/* ---------- WhatsApp: número, mensajes y enlaces ---------- */
+const waNumber = (C.whatsapp || '').replace(/\D/g, '');
+const phoneTxt = C.phone || (waNumber ? '+' + waNumber : '');
+const hello = 'Hola Mundo Online 👋';
+const srcTag = C.site ? `\n\n_Enviado desde ${C.site.replace(/^https?:\/\//, '')}_` : '';
+const MSG = { general: `${hello}, quisiera más información.` };
+const waHref = (msg = '') => waNumber
+  ? `https://wa.me/${waNumber}?text=${encodeURIComponent(msg + srcTag)}`
+  : `https://ig.me/m/${C.instagram || 'mundoonlinecostarica'}`; // respaldo mientras no haya número
+const openLink = u => { const a = document.createElement('a'); a.href = u; a.target = '_blank'; a.rel = 'noopener'; document.body.appendChild(a); a.click(); a.remove(); };
+const lineText = (p, q) => `• ${q} × *${p.name}* (SKU ${p.sku}) — ${money(p.price * q)}`;
+const orderMsg = (pairs, extra = '') => `${hello} Quiero hacer este pedido:\n\n${pairs.map(([p, q]) => lineText(p, q)).join('\n')}\n\nTotal: *${money(pairs.reduce((s, [p, q]) => s + p.price * q, 0))}*${extra}\n\n¿Me confirman disponibilidad y la entrega? 🙌`;
+const prodMsg = p => `${hello} Me interesa:\n\n${lineText(p, 1)}\n\n¿Está disponible? ¿Cómo coordinamos la entrega? 🙌`;
 
 let toastT;
 const toast = msg => { const t = $('#toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('show'), 2800); };
@@ -53,15 +62,22 @@ let seen = false; try { seen = sessionStorage.getItem('mo_intro'); sessionStorag
 if (reduce || seen) intro.remove();
 else { setTimeout(() => intro.classList.add('out'), 1500); setTimeout(() => intro.remove(), 2600); }
 
-/* ---------- WhatsApp / contacto ---------- */
-$$('[data-wa]').forEach(a => { a.href = waHref(a.dataset.msg || 'Hola Mundo Online 👋, quisiera más información.'); a.target = '_blank'; a.rel = 'noopener'; });
+/* ---------- Botones de WhatsApp ---------- */
+$$('[data-wa]').forEach(a => { a.href = waHref(a.dataset.msg || MSG.general); a.target = '_blank'; a.rel = 'noopener'; });
+$$('.wa-num').forEach(e => { e.textContent = phoneTxt; });
 if (!waNumber) {
   $$('[data-wa-label]').forEach(el => { el.textContent = el.textContent.replace('WhatsApp', 'Instagram'); });
-  $$('[data-wa] use, [data-wa-label]').forEach(el => { const u = el.tagName === 'use' ? el : el.parentElement.querySelector('use'); if (u) u.setAttribute('href', '#i-ig'); });
+  $$('[data-wa] use').forEach(u => { u.setAttribute('href', '#i-ig'); u.parentElement.classList.remove('fill'); });
 }
+const callHref = phoneTxt ? 'tel:' + phoneTxt.replace(/[^\d+]/g, '') : '';
+$$('#callLink, .wa-call').forEach(a => { if (callHref) { a.href = callHref; const t = $('span', a) || a; t.textContent = a.id === 'callLink' ? phoneTxt : 'Llamar ' + phoneTxt; } else a.hidden = true; });
+document.addEventListener('click', e => {
+  const a = e.target.closest('a[href^="https://wa.me"], a[href^="https://ig.me"]');
+  if (a) toast(waNumber ? 'Abriendo WhatsApp… 💬' : 'Abriendo Instagram… 💬');
+});
 $('#yr').textContent = new Date().getFullYear();
 const rows = [
-  waNumber && ['wa', 'WhatsApp y llamadas', C.phone || '+' + waNumber, waHref('Hola Mundo Online 👋')],
+  waNumber && ['wa', 'WhatsApp y llamadas', phoneTxt, waHref(MSG.general)],
   ['ig', 'Instagram', '@' + C.instagram, `https://www.instagram.com/${C.instagram}/`],
   ['fb', 'Facebook', '/' + C.facebook, `https://www.facebook.com/${C.facebook}`],
   C.phone && ['phone', 'Llámanos', C.phone, 'tel:' + C.phone.replace(/[^\d+]/g, '')],
@@ -76,9 +92,18 @@ $('#clist').innerHTML = rows.map(([i, t, s, h]) => {
 $('#mapFrame').src = 'https://www.google.com/maps?q=' + encodeURIComponent(C.address || C.mapQuery || 'Costa Rica') + '&output=embed';
 $('#contactForm').addEventListener('submit', e => {
   e.preventDefault();
-  const m = `Hola Mundo Online 👋\nMi nombre es ${$('#cn').value}${$('#ct').value ? ' (' + $('#ct').value + ')' : ''}.\n${$('#cm').value}`;
-  window.open(waHref(m), '_blank', 'noopener'); toast('Abriendo tu conversación…');
+  const m = `${hello}\nMi nombre es ${$('#cn').value}${$('#ct').value ? ' (' + $('#ct').value + ')' : ''}.\n${$('#cm').value}`, u = waHref(m);
+  openLink(u);
+  $('#cStatus').innerHTML = `Abrimos ${waNumber ? 'WhatsApp' : 'Instagram'} con tu mensaje. ¿No se abrió? <a href="${esc(u)}" target="_blank" rel="noopener">Toca aquí</a>.`;
 });
+
+/* ---------- Burbuja flotante de WhatsApp con menú rápido ---------- */
+const widget = $('#waWidget'), fab = $('#waFab'), pop = $('#waPop');
+const setPop = o => { pop.hidden = !o; fab.setAttribute('aria-expanded', o); fab.classList.toggle('open', o); if (o) fab.classList.remove('show-label'); };
+fab.addEventListener('click', () => setPop(pop.hidden));
+$('.wa-x', pop).addEventListener('click', () => { setPop(false); fab.focus(); });
+document.addEventListener('pointerdown', e => { if (!pop.hidden && !widget.contains(e.target)) setPop(false); });
+if (!reduce) { setTimeout(() => { if (pop.hidden) fab.classList.add('show-label'); }, 4500); setTimeout(() => fab.classList.remove('show-label'), 11500); }
 
 /* ---------- Header, progreso, menú ---------- */
 const nav = $('#nav'), bar = $('#bar'), menu = $('#menu'), burger = $('#burger');
@@ -90,7 +115,7 @@ addEventListener('scroll', onScroll, { passive: true }); onScroll();
 const setMenu = o => { menu.classList.toggle('open', o); burger.setAttribute('aria-expanded', o); };
 burger.addEventListener('click', () => setMenu(!menu.classList.contains('open')));
 $$('#menu a').forEach(a => a.addEventListener('click', () => setMenu(false)));
-const links = $$('#menu a');
+const links = $$('#menu a:not(.btn)');
 const secObs = new IntersectionObserver(es => es.forEach(e => {
   if (e.isIntersecting) links.forEach(a => a.classList.toggle('on', a.getAttribute('href') === '#' + e.target.id));
 }), { rootMargin: '-45% 0px -50% 0px' });
@@ -135,13 +160,14 @@ if (par.length && !reduce) {
   addEventListener('scroll', () => { if (!tick) { tick = true; requestAnimationFrame(upd); } }, { passive: true }); upd();
 }
 
-/* ---------- Lightbox ---------- */
+/* ---------- Lightbox (con botón para preguntar por la foto) ---------- */
 const lb = $('#lb'); let lbList = [], li = 0;
 const lbSrc = it => it.name ? srcOf(it.name, 1200) : it.src;
 const lbAlt = it => it.name ? IMG[it.name].alt : (it.alt || '');
 function showLb(i) {
-  li = (i + lbList.length) % lbList.length; const it = lbList[li], im = $('img', lb);
-  im.src = lbSrc(it); im.alt = lbAlt(it); $('figcaption', lb).textContent = it.title || lbAlt(it);
+  li = (i + lbList.length) % lbList.length; const it = lbList[li], im = $('img', lb), cap = it.title || lbAlt(it);
+  im.src = lbSrc(it); im.alt = lbAlt(it); $('figcaption', lb).textContent = cap;
+  $('#lbWa').href = waHref(`${hello}, me interesa el reloj de la foto «${cap}». ¿Me dan más información?`);
   lb.classList.add('open'); lockScroll();
 }
 const openLb = (list, i) => { lbList = list; showLb(i); };
@@ -155,13 +181,22 @@ const RIB1 = ['reloj-cronografo-colores', 'reloj-cristal-esmeralda', 'curren-ver
 const RIB2 = ['reloj-cuadrante-azul', 'cronografo-azul-oscuro', 'curren-colores', 'esmeralda-brazalete', 'cronografo-azul-metalico', 'cuadrante-azul-eslabones', 'curren-acero', 'clasico-esfera'];
 {
   const all = [...RIB1, ...RIB2].filter(n => IMG[n]).map(n => ({ name: n })), idx = n => all.findIndex(x => x.name === n);
-  const row = (list, cls) => { const tiles = (dup) => list.filter(n => IMG[n]).map(n => `<button class="rib" data-i="${idx(n)}" ${dup ? 'tabindex="-1" aria-hidden="true"' : ''} aria-label="Ampliar: ${esc(IMG[n].alt)}">${imgTag(n, '250px')}</button>`).join(''); return `<div class="rrow ${cls}">${tiles(false)}${tiles(true)}</div>`; };
+  const row = (list, cls) => { const tiles = dup => list.filter(n => IMG[n]).map(n => `<button class="rib" data-i="${idx(n)}" ${dup ? 'tabindex="-1" aria-hidden="true"' : ''} aria-label="Ampliar: ${esc(IMG[n].alt)}">${imgTag(n, '250px')}</button>`).join(''); return `<div class="rrow ${cls}">${tiles(false)}${tiles(true)}</div>`; };
   const box = $('#ribbon');
   if (all.length) {
     box.innerHTML = row(RIB1, '') + row(RIB2, 'rev'); hydrate(box);
     box.addEventListener('click', e => { const b = e.target.closest('[data-i]'); if (b) openLb(all, +b.dataset.i); });
   }
 }
+
+/* ---------- Pago con tarjeta: modos 'soon' | 'demo' | 'live' ---------- */
+const tiloOn = !!(C.payments && C.payments.tilopay), onvoOn = !!(C.payments && C.payments.onvo), cardOn = tiloOn || onvoOn;
+const cardMode = C.cardMode || 'soon', gwList = [...(tiloOn ? ['tilopay'] : []), ...(onvoOn ? ['onvo'] : [])];
+const GW = { tilopay: 'Tilopay', onvo: 'ONVO Pay' };
+let live = {};                                              // qué pasarelas tienen llaves en el servidor
+const gwState = k => cardMode === 'demo' ? 'demo' : (cardMode === 'live' && live[k] ? 'live' : 'soon');
+const cardState = () => gwList.reduce((best, k) => { const s = gwState(k); return best === 'live' || s === 'soon' ? best : s; }, 'soon');
+const cardGw = () => gwList.find(k => gwState(k) !== 'soon') || gwList[0];
 
 /* ---------- Catálogo ---------- */
 let DATA = { items: [], categories: [] }, filter = 'all', query = '';
@@ -177,14 +212,14 @@ const prodHTML = p => {
   </button>
   <div class="pbody"><div class="meta"><small>${esc(catName(p.cat))}</small><span class="sku">SKU ${esc(p.sku || '')}</span></div>
   <h3 data-qv="${esc(p.id)}">${esc(p.name)}</h3><p>${esc(p.desc || '')}</p>
-  <div class="pfoot"><span class="price">${money(p.price)}</span><button class="btn teal sm" data-add="${esc(p.id)}" aria-label="Agregar ${esc(p.name)} al pedido">${svg('plus')} Agregar</button></div></div></article>`;
+  <div class="pfoot"><span class="price">${money(p.price)}</span><div class="acts"><button class="btn teal sm" data-add="${esc(p.id)}" aria-label="Agregar ${esc(p.name)} al pedido">${svg('plus')} Agregar</button><a class="btn wa sm" href="${esc(waHref(prodMsg(p)))}" target="_blank" rel="noopener" aria-label="Pedir ${esc(p.name)} por WhatsApp (se abre en otra pestaña)">${svg('wa')} Pedir</a></div></div></div></article>`;
 };
 function renderProducts() {
   const q = query.trim().toLowerCase(), box = $('#products');
   const list = DATA.items.filter(p => (filter === 'all' || p.cat === filter) && (!q || (p.name + ' ' + (p.desc || '') + ' ' + (p.sku || '')).toLowerCase().includes(q)));
   const cat = DATA.categories.find(c => c.id === filter);
   box.innerHTML = list.length ? list.map(prodHTML).join('')
-    : (cat && !q ? `<div class="soon">${SOON_IMG[cat.id] ? imgTag(SOON_IMG[cat.id], '100vw') : ''}${svg(ICON[cat.id] || 'bolt')}<h3>${esc(cat.name)}: estamos preparando esta línea</h3><p>Escríbenos y te avisamos apenas tengamos novedades, o pregúntanos por lo que necesitas.</p><a class="btn primary" data-wa href="${esc(waHref('Hola Mundo Online 👋, me interesa la línea de ' + cat.name + '. ¿Me avisan cuando llegue?'))}" target="_blank" rel="noopener">${svg('wa')} Avísame por WhatsApp</a></div>`
+    : (cat && !q ? `<div class="soon">${SOON_IMG[cat.id] ? imgTag(SOON_IMG[cat.id], '100vw') : ''}${svg(ICON[cat.id] || 'bolt')}<h3>${esc(cat.name)}: estamos preparando esta línea</h3><p>Escríbenos y te avisamos apenas tengamos novedades, o pregúntanos por lo que necesitas.</p><a class="btn wa lg" href="${esc(waHref(hello + ', me interesa la línea de ' + cat.name + '. ¿Me avisan cuando llegue?'))}" target="_blank" rel="noopener">${svg('wa')}<span><b>Avísame por WhatsApp</b><small>${esc(phoneTxt)}</small></span></a></div>`
       : '<p class="empty">No encontramos productos con ese filtro. ¿Te ayudamos por WhatsApp?</p>');
   hydrate(box); watch(box); requestAnimationFrame(() => $$('.rv', box).forEach(el => el.classList.add('in')));
 }
@@ -222,7 +257,8 @@ function openQv(id) {
   $('#qvFeat').innerHTML = (p.features || []).map(f => `<li>${svg('check')}<span>${esc(f)}</span></li>`).join('');
   $('#qvThumbs').innerHTML = ims.length > 1 ? ims.map((n, i) => `<button data-i="${i}" aria-label="Foto ${i + 1}">${imgTag(n, '68px')}</button>`).join('') : '';
   hydrate($('#qvThumbs')); $$('#qvThumbs img').forEach(i => { i.loading = 'eager'; });
-  $('#qvWa').href = waHref(orderMsg([[p, 1]]));
+  $('#qvWa').href = waHref(prodMsg(p));
+  const qc = $('#qvCard'); qc.hidden = !cardOn; qc.classList.toggle('is-soon', cardState() === 'soon');
   setQvImg(0); qv.classList.add('on'); $('#veil').classList.add('on'); lockScroll(); $('#qvClose').focus();
 }
 function closeQv() { if (!qv.classList.contains('on')) return; qv.classList.remove('on'); if (!$('.drawer.on, #checkout.on')) $('#veil').classList.remove('on'); lockScroll(); }
@@ -231,28 +267,42 @@ $('#qvMain').addEventListener('click', () => { if (qvP) openLb((qvP.images || []
 $('#qvAdd').addEventListener('click', () => { add(qvP.id); });
 $('#qvClose').addEventListener('click', closeQv);
 qv.addEventListener('mousedown', e => { if (e.target === qv) closeQv(); });
+$('#qvCard').addEventListener('click', () => {
+  if (cardState() === 'soon') return toast('El pago con tarjeta se activa muy pronto. Mientras tanto, pide por WhatsApp 💬');
+  if (!cart[qvP.id]) { cart[qvP.id] = 1; save(); renderCart(); }
+  closeQv(); openCheckout(true);
+});
 
 /* ---------- Pedido (carrito) ---------- */
 const total = () => Object.entries(cart).reduce((s, [id, q]) => s + (byId(id)?.price || 0) * q, 0);
 const count = () => Object.values(cart).reduce((s, q) => s + q, 0);
 const save = () => store.set('mo_cart', cart);
-const lineText = (p, q) => `• ${q} × ${p.name} (SKU ${p.sku}) — ${money(p.price * q)}`;
-const orderMsg = (pairs, extra = '') => `Hola Mundo Online 👋 Quiero hacer este pedido:\n\n${pairs.map(([p, q]) => lineText(p, q)).join('\n')}\n\nTotal: ${money(pairs.reduce((s, [p, q]) => s + p.price * q, 0))}${extra}\n\n¿Me confirman disponibilidad y la entrega? 🙌`;
+const pairsNow = () => Object.entries(cart).map(([id, q]) => [byId(id), q]).filter(([p]) => p);
+function syncBar() {
+  const on = count() > 0 && !$('.drawer.on'); $('#orderBar').classList.toggle('on', on); document.body.classList.toggle('has-bar', on);
+}
 function add(id) {
   cart[id] = Math.min((cart[id] || 0) + 1, 20); save(); renderCart();
   const b = $('#cartCount'); b.classList.remove('bump'); void b.offsetWidth; b.classList.add('bump');
   toast(`✓ ${byId(id).name} agregado a tu pedido`);
 }
 function renderCart() {
-  const ids = Object.keys(cart);
-  $('#cartCount').textContent = count(); $('#cartTotal').textContent = money(total());
-  const btn = $('#checkoutBtn'); btn.disabled = !ids.length; btn.style.opacity = ids.length ? 1 : .5; $('#cartClear').hidden = !ids.length;
-  btn.className = 'btn block ' + (cardOn ? 'primary' : 'wa'); $('#checkoutLabel').textContent = cardOn ? 'Finalizar compra' : 'Pedir por WhatsApp';
-  $('#cartBody').innerHTML = ids.length ? ids.map(id => { const p = byId(id), n = (p.images || []).find(x => IMG[x]); return `<div class="line-item"><div class="th" style="${n ? `--c:${IMG[n].c}` : `--g:${GRAD[p.cat]}`}">${n ? imgTag(n, '62px') : svg(ICON[p.cat] || 'bolt')}</div>
+  const ids = Object.keys(cart), pairs = pairsNow(), n = count(), href = pairs.length ? waHref(orderMsg(pairs)) : '';
+  $('#cartCount').textContent = n; $('#cartTotal').textContent = money(total()); $('#cartClear').hidden = $('#cartCopy').hidden = !ids.length;
+  // WhatsApp: enlaces reales (cajón y barra)
+  for (const a of [$('#waOrder'), $('#obWa')]) { if (href) { a.href = href; a.removeAttribute('aria-disabled'); } else { a.removeAttribute('href'); a.setAttribute('aria-disabled', 'true'); } }
+  $('#waOrderLabel').textContent = pairs.length ? `Pedir por WhatsApp · ${money(total())}` : 'Pedir por WhatsApp';
+  $('#waOrderSub').textContent = phoneTxt ? `Chat con ${phoneTxt}` : '';
+  $('#obCount').textContent = n; $('#obTotal').textContent = money(total());
+  // tarjeta
+  const cp = $('#cardPay'), st = cardState(); cp.hidden = !cardOn;
+  cp.classList.toggle('is-soon', st === 'soon'); cp.setAttribute('aria-disabled', String(!pairs.length));
+  $('.cp-tag', cp).textContent = st === 'soon' ? 'Próximamente' : st === 'demo' ? 'Demostración' : GW[cardGw()];
+  $('#cartBody').innerHTML = ids.length ? ids.map(id => { const p = byId(id), im = (p.images || []).find(x => IMG[x]); return `<div class="line-item"><div class="th" style="${im ? `--c:${IMG[im].c}` : `--g:${GRAD[p.cat]}`}">${im ? imgTag(im, '62px') : svg(ICON[p.cat] || 'bolt')}</div>
     <div><b>${esc(p.name)}</b><small>SKU ${esc(p.sku)} · ${money(p.price)}</small><div class="qty"><button data-dec="${id}" aria-label="Menos">${svg('minus')}</button><span>${cart[id]}</span><button data-inc="${id}" aria-label="Más">${svg('plus')}</button></div></div>
     <div style="text-align:right"><b>${money(p.price * cart[id])}</b><br><button class="rm" data-rm="${id}">Quitar</button></div></div>`; }).join('')
     : `<p class="empty">Tu pedido está vacío.<br>¡Explora el catálogo y agrega tus favoritos!</p>`;
-  hydrate($('#cartBody'));
+  hydrate($('#cartBody')); syncBar();
 }
 $('#cartBody').addEventListener('click', e => {
   const t = e.target.closest('button'); if (!t) return;
@@ -263,45 +313,57 @@ $('#cartBody').addEventListener('click', e => {
   save(); renderCart();
 });
 $('#cartClear').addEventListener('click', () => { Object.keys(cart).forEach(k => delete cart[k]); save(); renderCart(); });
+$('#cartCopy').addEventListener('click', async () => {
+  try { await navigator.clipboard.writeText(orderMsg(pairsNow())); toast('Pedido copiado. Pégalo en WhatsApp 📋'); }
+  catch { toast('No se pudo copiar. Usa el botón de WhatsApp.'); }
+});
 const drawer = $('#drawer'), veil = $('#veil');
-const openDrawer = o => { drawer.classList.toggle('on', o); veil.classList.toggle('on', o || qv.classList.contains('on') || $('#checkout').classList.contains('on')); drawer.setAttribute('aria-hidden', !o); lockScroll(); if (o) $('#cartClose').focus(); };
+const openDrawer = o => { drawer.classList.toggle('on', o); veil.classList.toggle('on', o || qv.classList.contains('on') || $('#checkout').classList.contains('on')); drawer.setAttribute('aria-hidden', !o); lockScroll(); syncBar(); if (o) $('#cartClose').focus(); };
 $('#cartOpen').addEventListener('click', () => openDrawer(true));
+$('#obOpen').addEventListener('click', () => openDrawer(true));
 $('#cartClose').addEventListener('click', () => openDrawer(false));
 veil.addEventListener('click', () => { openDrawer(false); closeCheckout(); closeQv(); });
-addEventListener('keydown', e => { if (e.key === 'Escape') { openDrawer(false); closeCheckout(); closeQv(); closeLb(); setMenu(false); } });
-$('#checkoutBtn').addEventListener('click', () => {
-  if (!count()) return;
-  if (cardOn) return openCheckout();
-  const pairs = Object.entries(cart).map(([id, q]) => [byId(id), q]);
-  window.open(waHref(orderMsg(pairs)), '_blank', 'noopener'); toast('Abrimos WhatsApp con tu pedido 🙌');
+addEventListener('keydown', e => { if (e.key === 'Escape') { openDrawer(false); closeCheckout(); closeQv(); closeLb(); setMenu(false); setPop(false); } });
+$('#cardPay').addEventListener('click', () => {
+  if (!count()) return toast('Primero agrega un producto a tu pedido');
+  if (cardState() === 'soon') return toast('El pago con tarjeta se activa muy pronto. Mientras tanto, pide por WhatsApp 💬');
+  openCheckout(true);
 });
 
-/* ---------- Checkout con tarjeta (fase 2: solo si config.js activa una pasarela) ---------- */
+/* ---------- Checkout con tarjeta (Tilopay / ONVO) ---------- */
 const co = $('#checkout'), err = $('#coErr');
 const PAY = {
+  tilopay: ['card', 'Tarjeta de crédito o débito', 'Pagas en el checkout seguro de Tilopay'],
   onvo: ['card', 'Tarjeta de crédito o débito', 'Pago seguro con ONVO Pay'],
-  tilopay: ['card', 'Tarjeta · Tilopay', 'Te llevamos al checkout seguro de Tilopay'],
   whatsapp: ['sinpe', 'SINPE Móvil o efectivo', 'Coordinamos el pago y la entrega contigo por WhatsApp']
 };
-const payStatus = cardOn ? fetch(C.api.status).then(r => r.ok ? r.json() : {}).catch(() => ({})) : Promise.resolve({});
-const renderPayOpts = st => {
-  const allowed = C.payments || { whatsapp: true };
-  let enabled = Object.keys(PAY).filter(k => allowed[k] && (k === 'whatsapp' || st[k]));
-  if (!enabled.length) enabled = ['whatsapp'];
-  $('#payOpts').innerHTML = enabled.map((k, i) => `<label class="opt"><input type="radio" name="pay" value="${k}"${i ? '' : ' checked'}><span class="ico" style="width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:var(--navy);color:var(--teal)">${svg(PAY[k][0])}</span><span><b>${PAY[k][1]}</b><small>${PAY[k][2]}</small></span></label>`).join('');
-};
+if (cardMode === 'live' && cardOn) fetch(C.api.status).then(r => r.ok ? r.json() : {}).catch(() => ({})).then(st => { live = st; renderCart(); });
+function renderPayOpts(prefCard) {
+  const opts = [...gwList.map(k => ({ k, st: gwState(k) })), { k: 'whatsapp', st: 'live' }];
+  const first = (prefCard && opts.find(o => o.k !== 'whatsapp' && o.st !== 'soon')) || opts.find(o => o.st !== 'soon');
+  $('#payOpts').innerHTML = opts.map(o => `<label class="opt${o.st === 'soon' ? ' is-soon' : ''}"><input type="radio" name="pay" value="${o.k}"${o === first ? ' checked' : ''}${o.st === 'soon' ? ' disabled' : ''}><span class="ico" style="width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:var(--navy);color:var(--teal)">${svg(PAY[o.k][0])}</span><span><b>${PAY[o.k][1]}${o.k !== 'whatsapp' ? ' · ' + GW[o.k] : ''}</b><small>${o.st === 'demo' ? 'Demostración: no realiza ningún cobro' : o.st === 'soon' ? 'Se activa muy pronto' : PAY[o.k][2]}</small></span>${o.st === 'soon' ? '<em class="chip-soon">Próximamente</em>' : ''}</label>`).join('');
+}
 const showErr = m => { err.textContent = m || ''; err.classList.toggle('on', !!m); };
-async function openCheckout() {
+const step = n => { ['1', '2', '3'].forEach(k => { $('#coStep' + k).hidden = k !== String(n); }); };
+async function openCheckout(prefCard) {
   if (!count()) return;
-  renderPayOpts(await payStatus);
-  openDrawer(false); showErr(''); $('#coStep1').hidden = false; $('#coStep2').hidden = true;
+  renderPayOpts(prefCard);
+  openDrawer(false); showErr(''); step(1); $('#demoView').hidden = false; $('#demoDone').hidden = true;
   $('#coTotal').textContent = money(total()); co.classList.add('on'); veil.classList.add('on'); lockScroll();
   const c = store.get('mo_customer', {}); Object.entries(c).forEach(([k, v]) => { const el = $('#f-' + k); if (el) el.value = v; });
 }
 function closeCheckout() { if (!co.classList.contains('on')) return; co.classList.remove('on'); if (!qv.classList.contains('on')) veil.classList.remove('on'); lockScroll(); }
 $('#coClose').addEventListener('click', closeCheckout);
 co.addEventListener('mousedown', e => { if (e.target === co) closeCheckout(); });
-$('#coBack').addEventListener('click', () => { $('#coStep1').hidden = false; $('#coStep2').hidden = true; });
+$('#coBack').addEventListener('click', () => step(1));
+$('#demoBack').addEventListener('click', () => step(1));
+$('#demoClose').addEventListener('click', closeCheckout);
+$('#demoOk').addEventListener('click', () => {
+  const pairs = pairsNow(), ref = 'MO-DEMO-' + Date.now().toString(36).toUpperCase();
+  $('#demoRef').textContent = ref; $('#demoWa').href = waHref(orderMsg(pairs, `\n\nPago con tarjeta (${GW[cardGw()]}) · Ref. ${ref}`));
+  $('#demoView').hidden = true; $('#demoDone').hidden = false;
+  Object.keys(cart).forEach(k => delete cart[k]); save(); renderCart();
+});
 
 const customer = () => Object.fromEntries(['name', 'phone', 'email', 'prov', 'city', 'addr'].map(k => [k, $('#f-' + k).value.trim()]));
 const items = () => Object.entries(cart).map(([id, qty]) => ({ id, qty }));
@@ -319,19 +381,19 @@ $('#coForm').addEventListener('submit', async e => {
   const method = $('input[name=pay]:checked')?.value, cu = customer(), btn = $('#coGo'), label = btn.innerHTML;
   store.set('mo_customer', cu); showErr('');
   if (method === 'whatsapp') {
-    const pairs = Object.entries(cart).map(([id, q]) => [byId(id), q]);
     const extra = `\n\nNombre: ${cu.name}\nTel: ${cu.phone}\nCorreo: ${cu.email}\nEntrega: ${cu.addr}, ${cu.city}, ${cu.prov}\n\nPago: SINPE Móvil o efectivo`;
-    window.open(waHref(orderMsg(pairs, extra)), '_blank', 'noopener'); return finish('pago=whatsapp');
+    openLink(waHref(orderMsg(pairsNow(), extra))); return finish('pago=whatsapp');
   }
+  if (gwState(method) === 'demo') { $('#demoGw').textContent = GW[method]; $('#demoTotal').textContent = money(total()); return step(3); }
   btn.disabled = true; btn.textContent = 'Procesando…';
   try {
     if (method === 'tilopay') { const d = await api(C.api.tilopay, { items: items(), customer: cu }); if (!d.url) throw new Error('Respuesta inválida'); location.href = d.url; return; }
     const d = await api(C.api.onvo, { items: items(), customer: cu });
-    await loadOnvo(); $('#coStep1').hidden = true; $('#coStep2').hidden = false; $('#onvoBox').innerHTML = '';
+    await loadOnvo(); step(2); $('#onvoBox').innerHTML = '';
     window.onvo.pay({
       publicKey: d.publicKey, paymentIntentId: d.paymentIntentId, paymentType: 'one_time', locale: 'es',
       onSuccess: () => finish(`pago=onvo&ref=${encodeURIComponent(d.paymentIntentId)}`),
-      onError: x => { $('#coStep1').hidden = false; $('#coStep2').hidden = true; showErr(x?.message || 'El pago no pudo completarse. Intenta con otra tarjeta.'); }
+      onError: x => { step(1); showErr(x?.message || 'El pago no pudo completarse. Intenta con otra tarjeta.'); }
     }).render('#onvoBox');
   } catch (x) {
     showErr(['offline', 'nobackend'].includes(x.message)
@@ -352,7 +414,7 @@ fetch('assets/gallery/gallery.json').then(r => r.json()).catch(() => []).then(li
     g.innerHTML = ok.map((x, i) => `<button class="shot rv ${esc(x.span || '')}" data-i="${i}" aria-label="Ampliar: ${esc(x.title || x.alt || 'foto')}" style="--c:${x.img ? IMG[x.img].c : '#123'}">${x.img ? imgTag(x.img, GSIZES[x.span || ''] || GSIZES['']) : `<img src="${esc(x.src)}" alt="${esc(x.alt || '')}" loading="lazy">`}${x.title ? `<span>${esc(x.title)}</span>` : ''}</button>`).join('');
     g.addEventListener('click', e => { const b = e.target.closest('[data-i]'); if (b) openLb(lbl, +b.dataset.i); });
   } else {
-    g.innerHTML = BRAND.map(([t, i, c, h], n) => `<div class="shot brand rv" style="--g:${GRAD[c]};--d:${n * .06}s;animation-delay:${-n * 1.3}s">${svg(i)}<b>${t}</b></div>`).join('');
+    g.innerHTML = BRAND.map(([t, i, c], n) => `<div class="shot brand rv" style="--g:${GRAD[c]};--d:${n * .06}s;animation-delay:${-n * 1.3}s">${svg(i)}<b>${t}</b></div>`).join('');
   }
   hydrate(g); watch(g);
 });

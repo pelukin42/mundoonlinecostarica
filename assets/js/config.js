@@ -21,9 +21,13 @@ window.MO_CONFIG = {
   mapQuery: 'San José, Costa Rica', // Texto para el mapa (dirección exacta o nombre del local)
   coverage: 'Entrega incluida en el área metropolitana · Envíos a todo el país por correos y encomienda',
 
-  // Pedidos: por ahora todo se envía por WhatsApp (el cliente paga por SINPE, tarjeta o efectivo al coordinar).
-  // Fase 2 (opcional): para cobrar con tarjeta en la web ponga true UNA pasarela y configure sus llaves (ver README).
-  payments: { onvo: false, tilopay: false, whatsapp: true },
+  // Pedidos: el botón principal siempre envía el pedido por WhatsApp (SINPE, efectivo o tarjeta al coordinar).
+  // Pago con tarjeta en la web: elija la pasarela (tilopay u onvo) y el modo:
+  //   'soon' → se muestra "Próximamente" (valor actual: aún no hay credenciales)
+  //   'demo' → simula el flujo completo sin cobrar (para revisar con el cliente)
+  //   'live' → cobra de verdad: requiere Netlify + llaves de la pasarela (ver README)
+  payments: { onvo: false, tilopay: true, whatsapp: true },
+  cardMode: 'soon',
 
   // Endpoints de las funciones serverless (Netlify). Cambiar si usa otro hosting.
   api: {
