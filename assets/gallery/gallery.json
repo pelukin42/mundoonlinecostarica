@@ -1,18 +1,67 @@
 [
-  { "img": "reloj-cronografo-colores", "title": "Estilo que se nota", "span": "big" },
-  { "img": "reloj-cristal-esmeralda", "title": "Un diseño que roba miradas", "span": "tall" },
-  { "img": "cuadrante-azul-esfera", "title": "Detalle de cuadrante" },
-  { "img": "curren-verde", "title": "Curren cronógrafo verde" },
-  { "img": "reloj-azul-clasico", "title": "Lujo y diseño en una pieza", "span": "wide" },
-  { "img": "cronografo-celeste-menta", "title": "Celeste menta" },
-  { "img": "esmeralda-brazalete", "title": "Brazalete dorado" },
-  { "img": "promo-curren", "title": "Promo 20+5", "span": "big" },
-  { "img": "cuadrante-azul-eslabones", "title": "Eslabones de acero" },
-  { "img": "reloj-cuadrante-azul", "title": "Estilo que distingue", "span": "wide" },
-  { "img": "curren-azul", "title": "Curren azul" },
-  { "img": "cronografo-azul-oscuro", "title": "Azul oscuro" },
-  { "img": "cronografo-azul-metalico", "title": "Azul metálico" },
-  { "img": "curren-acero", "title": "Curren acero" },
-  { "img": "clasico-esfera", "title": "Esfera degradada" },
-  { "img": "curren-colores", "title": "Seis colores de esfera" }
+  {
+    "img": "reloj-cronografo-colores",
+    "title": "Estilo que se nota",
+    "span": "big"
+  },
+  {
+    "img": "reloj-cristal-esmeralda",
+    "title": "Un diseño que roba miradas",
+    "span": "tall"
+  },
+  {
+    "img": "cuadrante-azul-esfera",
+    "title": "Detalle de cuadrante"
+  },
+  {
+    "img": "curren-verde",
+    "title": "Curren cronógrafo verde"
+  },
+  {
+    "img": "reloj-azul-clasico",
+    "title": "Lujo y diseño en una pieza",
+    "span": "wide"
+  },
+  {
+    "img": "cronografo-celeste-menta",
+    "title": "Celeste menta"
+  },
+  {
+    "img": "esmeralda-brazalete",
+    "title": "Brazalete dorado"
+  },
+  {
+    "img": "promo-curren",
+    "title": "Promo 20+5",
+    "span": "big"
+  },
+  {
+    "img": "cuadrante-azul-eslabones",
+    "title": "Eslabones de acero"
+  },
+  {
+    "img": "reloj-cuadrante-azul",
+    "title": "Estilo que distingue",
+    "span": "wide"
+  },
+  {
+    "img": "curren-azul",
+    "title": "Curren azul"
+  },
+  {
+    "img": "cronografo-azul-oscuro",
+    "title": "Azul oscuro"
+  },
+  {
+    "img": "cronografo-azul-metalico",
+    "title": "Azul metálico"
+  },
+  {
+    "img": "curren-acero",
+    "title": "Curren acero"
+  },
+  {
+    "img": "curren-colores",
+    "title": "Seis colores de esfera"
+  }
 ]
