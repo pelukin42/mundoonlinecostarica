@@ -23,11 +23,11 @@ window.MO_CONFIG = {
 
   // Pedidos: el botón principal siempre envía el pedido por WhatsApp (SINPE, efectivo o tarjeta al coordinar).
   // Pago con tarjeta en la web: elija la pasarela (tilopay u onvo) y el modo:
-  //   'soon' → se muestra "Próximamente" (valor actual: aún no hay credenciales)
+  //   'soon' → se muestra "Próximamente" (aún no hay credenciales)
   //   'demo' → simula el flujo completo sin cobrar (para revisar con el cliente)
   //   'live' → cobra de verdad: requiere Netlify + llaves de la pasarela (ver README)
-  payments: { onvo: false, tilopay: true, whatsapp: true },
-  cardMode: 'soon',
+  payments: { onvo: true, tilopay: false, whatsapp: true },
+  cardMode: 'live',  // sin llaves de ONVO en el servidor, el botón sigue mostrando "Próximamente"
 
   // Endpoints de las funciones serverless (Netlify). Cambiar si usa otro hosting.
   api: {

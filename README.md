@@ -66,7 +66,19 @@ instrucciones de DNS. Es la única opción que ejecuta las funciones de la fase 
 **Opción C · hosting tradicional (cPanel/FTP).** Subir el contenido de esta carpeta a `public_html`.
 Las URLs de canonical/OG/sitemap ya apuntan a `https://mundoonlinecr.com`.
 
-## Pago con tarjeta (Tilopay)
+## Pago con tarjeta · ONVO Pay (pasarela activa)
+`config.js` trae `payments.onvo: true` y `cardMode: 'live'`. Mientras Netlify no tenga las llaves, el botón dice «Próximamente»;
+al cargarlas pasa solo a «ONVO Pay». Para probar sin dinero real:
+1. Crear la cuenta en dashboard.onvopay.com: se generan llaves de prueba (`onvo_test_...`).
+2. Publicar en **Netlify** (las funciones no corren en GitHub Pages) y cargar `ONVO_SECRET_KEY` y `ONVO_PUBLIC_KEY` en
+   *Site configuration → Environment variables* (nunca en el repo).
+3. Pagar con una tarjeta de prueba (docs.onvopay.com/en/payments/testing): Visa `4242 4242 4242 4242` aprobada,
+   `4000 0000 0000 3220` con 3DS, Mastercard `5555 5555 5555 4444`; cualquier fecha futura y CVV válido.
+4. Al aprobar, vuelve a `gracias.html?pago=onvo&ref=<id>`.
+Pendiente antes de cobrar de verdad (lo pide la propia ONVO): webhook `payment-intent.succeeded` con verificación de firma
+(hoy el retorno lo confirma solo el navegador), probar un pago rechazado y un reembolso, y pasar a llaves `onvo_live_...`.
+
+## Pago con tarjeta · Tilopay (alternativa, desactivada: `payments.tilopay: false`)
 Aparece como **«Pagar con tarjeta · Tilopay»** en el cajón del pedido y en la vista rápida, junto a WhatsApp. Tiene tres modos
 (`cardMode` en `assets/js/config.js`):
 * `'soon'` (actual): se muestra como «Próximamente» porque aún no hay credenciales.
